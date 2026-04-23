@@ -2,9 +2,8 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 [![C](https://img.shields.io/badge/language-C-A8B9CC?style=flat-square&logo=c&logoColor=white)](https://en.wikipedia.org/wiki/C_(programming_language))
-[![STM32](https://img.shields.io/badge/platform-STM32-03313D?style=flat-square&logo=stmicroelectronics&logoColor=white)](https://www.st.com/en/development-tools/stm32cubeide.html)
-[![RISC&#8209;V](https://img.shields.io/badge/platform-RISC&#8209;V-002777?style=flat-square&logo=risc-v&logoColor=white)](https://riscv.org/)
-[![Skill](https://img.shields.io/badge/skill-/ecs-5678a0?style=flat-square)](https://claude.com/claude-code)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-5678a0?style=flat-square&logo=anthropic&logoColor=white)](https://claude.com/claude-code)
+[![Cursor](https://img.shields.io/badge/Cursor-7C3AED?style=flat-square&logo=cursor&logoColor=white)](https://cursor.com)
 [![No malloc](https://img.shields.io/badge/no-malloc-success?style=flat-square)](https://en.wikipedia.org/wiki/C_dynamic_memory_allocation)
 
 > Embedded C skill bundle for generating, rewriting, and reviewing drivers and low-level firmware code.
