@@ -1,16 +1,12 @@
 # embedded code skill
 
 <p align="center">
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
-[![C](https://img.shields.io/badge/language-C-A8B9CC?style=flat-square&logo=c&logoColor=white)](https://en.wikipedia.org/wiki/C_(programming_language))
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-5678a0?style=flat-square&logo=anthropic&logoColor=white)](https://claude.com/claude-code)
-[![Cursor](https://img.shields.io/badge/Cursor-7C3AED?style=flat-square&logo=cursor&logoColor=white)](https://cursor.com)
-[![No malloc](https://img.shields.io/badge/no-malloc-success?style=flat-square)](https://en.wikipedia.org/wiki/C_dynamic_memory_allocation)
+  <img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="License: MIT" />
+  <img src="https://img.shields.io/badge/language-C-A8B9CC?style=flat-square&logo=c&logoColor=white" alt="C" />
+  <img src="https://img.shields.io/badge/Claude%20Code-5678a0?style=flat-square&logo=anthropic&logoColor=white" alt="Claude Code" />
+  <img src="https://img.shields.io/badge/Cursor-7C3AED?style=flat-square&logo=cursor&logoColor=white" alt="Cursor" />
+  <img src="https://img.shields.io/badge/no%20malloc-success?style=flat-square" alt="No malloc" />
 </p>
-[![C](https://img.shields.io/badge/language-C-A8B9CC?style=flat-square&logo=c&logoColor=white)](https://en.wikipedia.org/wiki/C_(programming_language))
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-5678a0?style=flat-square&logo=anthropic&logoColor=white)](https://claude.com/claude-code)
-[![Cursor](https://img.shields.io/badge/Cursor-7C3AED?style=flat-square&logo=cursor&logoColor=white)](https://cursor.com)
-[![No malloc](https://img.shields.io/badge/no-malloc-success?style=flat-square)](https://en.wikipedia.org/wiki/C_dynamic_memory_allocation)
 
 > 嵌入式 C 代码规范包，用于生成、重写、审查驱动和低层固件代码。
 
