@@ -6,6 +6,16 @@
 
 ---
 
+## ワンクリックインストール
+
+```bash
+curl -sL https://raw.githubusercontent.com/leon-2050/embedded-code-skill/main/install.sh | bash
+```
+
+インストール後、`/ecs` でスキルを呼び出せます。
+
+---
+
 ## このパッケージの目的
 
 このパッケージは、モデルに一貫した Embedded C の作法を与えるためのものです。主な用途は次のとおりです。

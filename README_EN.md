@@ -6,6 +6,16 @@
 
 ---
 
+## One-Line Install
+
+```bash
+curl -sL https://raw.githubusercontent.com/leon-2050/embedded-code-skill/main/install.sh | bash
+```
+
+After install, use `/ecs` to invoke the skill.
+
+---
+
 ## What This Package Is For
 
 This package gives the model one consistent house style for:

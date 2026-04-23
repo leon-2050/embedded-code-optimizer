@@ -6,6 +6,16 @@
 
 ---
 
+## 一键安装
+
+```bash
+curl -sL https://raw.githubusercontent.com/leon-2050/embedded-code-skill/main/install.sh | bash
+```
+
+安装后直接使用 `/ecs` 调用本技能。
+
+---
+
 ## 这个包解决什么问题
 
 它提供一套统一的嵌入式 C 规范，让模型在以下任务中保持一致输出：
