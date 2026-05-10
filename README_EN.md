@@ -6,7 +6,6 @@
   <img src="https://img.shields.io/badge/Claude%20Code-5678a0?style=flat-square&logo=anthropic&logoColor=white" alt="Claude Code" />
   <img src="https://img.shields.io/badge/Cursor-7C3AED?style=flat-square&logo=cursor&logoColor=white" alt="Cursor" />
   <img src="https://img.shields.io/badge/VSCode-007ACC?style=flat-square&logo=visualstudiocode&logoColor=white" alt="VSCode" />
-  <img src="https://img.shields.io/badge/no%20malloc-success?style=flat-square" alt="No malloc" />
 </p>
 
 > Embedded C code assistant for driver skeletons, legacy-code cleanup, low-level firmware review, and adapting one rule set to different IDE or agent environments.
