@@ -33,10 +33,10 @@
 ## クイックスタート
 
 ```bash
-/embedded-code-skill STM32 UART ドライバを生成、ベースアドレス 0x4000C000
-/embedded-code-skill この SPI 初期化コードを整理し、レジスタ書き込み順序を保つ
-/embedded-code-skill この DMA ISR の race、volatile、cache 問題をレビューする
-/embedded-code-skill Cursor .cursor/rules/*.mdc 向けのルール内容を生成する
+/ecs STM32 UART ドライバを生成、ベースアドレス 0x4000C000
+/ecs この SPI 初期化コードを整理し、レジスタ書き込み順序を保つ
+/ecs この DMA ISR の race、volatile、cache 問題をレビューする
+/ecs Cursor .cursor/rules/*.mdc 向けのルール内容を生成する
 ```
 
 ---

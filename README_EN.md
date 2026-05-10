@@ -33,10 +33,10 @@ It is **not** a substitute for a vendor reference manual, real register map, IRQ
 ## Quick Start
 
 ```bash
-/embedded-code-skill Generate an STM32 UART driver with base address 0x4000C000
-/embedded-code-skill Clean up this SPI init code while preserving register write order
-/embedded-code-skill Review this DMA ISR for race, volatile, or cache issues
-/embedded-code-skill Generate Cursor .cursor/rules/*.mdc rule content
+/ecs Generate an STM32 UART driver skeleton, base address 0x4000C000
+/ecs Clean up this SPI init code, preserving register write sequence
+/ecs Review this DMA ISR for race, volatile, or cache issues
+/ecs Generate Cursor .cursor/rules/*.mdc rule content
 ```
 
 ---

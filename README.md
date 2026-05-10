@@ -33,10 +33,10 @@
 ## 快速开始
 
 ```bash
-/embedded-code-skill 生成一个 STM32 UART 驱动，基地址 0x4000C000
-/embedded-code-skill 整理这段 SPI 初始化代码，并保留寄存器写入顺序
-/embedded-code-skill 审查这段 DMA ISR 是否有竞态、volatile 或 cache 问题
-/embedded-code-skill 生成一份 Cursor .cursor/rules/*.mdc 规则内容
+/ecs 生成一个 STM32 UART 驱动，基地址 0x4000C000
+/ecs 整理这段 SPI 初始化代码，并保留寄存器写入顺序
+/ecs 审查这段 DMA ISR 是否有竞态、volatile 或 cache 问题
+/ecs 生成一份 Cursor .cursor/rules/*.mdc 规则内容
 ```
 
 ---
