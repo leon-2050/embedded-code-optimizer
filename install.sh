@@ -2,25 +2,24 @@
 # ecs install script - one command to install embedded-code-skill
 set -euo pipefail
 
-SKILL_DIR="${HOME}/.claude/skills/ecs"
-TMP_DIR=$(mktemp -d)
+SKILL_DIR="${HOME}/.workbuddy/skills/embedded-code-skill"
 REPO_URL="https://raw.githubusercontent.com/leon-2050/embedded-code-skill/main"
 
-echo "Installing ecs skill to ${SKILL_DIR}..."
+echo "Installing embedded-code-skill to ${SKILL_DIR}..."
 
 mkdir -p "${SKILL_DIR}"
 
-# Download main SKILL.md
+# Download single-entry SKILL.md
 curl -sf "${REPO_URL}/SKILL.md" -o "${SKILL_DIR}/SKILL.md"
 
-# Download sub-skills
-for subskill in embedded-code-skill-standards embedded-code-skill-drivers embedded-code-skill-arch embedded-code-skill-domains; do
-  mkdir -p "${SKILL_DIR}/${subskill}"
-  curl -sf "${REPO_URL}/${subskill}/SKILL.md" -o "${SKILL_DIR}/${subskill}/SKILL.md"
-done
+if [ ! -s "${SKILL_DIR}/SKILL.md" ]; then
+    echo "Error: Failed to download SKILL.md" >&2
+    exit 1
+fi
 
-# Download validation
-mkdir -p "${SKILL_DIR}/validation"
-curl -sf "${REPO_URL}/validation/check-consistency.sh" -o "${SKILL_DIR}/validation/check-consistency.sh"
-
-echo "Done! Run /ecs to use the skill."
+echo "Done! The skill is installed at ${SKILL_DIR}/SKILL.md"
+echo "Usage: /ecs <command> [args]"
+echo "  /ecs generate  - Generate driver skeleton"
+echo "  /ecs rewrite   - Clean up legacy code"
+echo "  /ecs review    - Review for risks"
+echo "  /ecs install   - Adapt rules for IDE/agent"

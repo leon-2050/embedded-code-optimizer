@@ -6,9 +6,10 @@
   <img src="https://img.shields.io/badge/Claude%20Code-5678a0?style=flat-square&logo=anthropic&logoColor=white" alt="Claude Code" />
   <img src="https://img.shields.io/badge/Cursor-7C3AED?style=flat-square&logo=cursor&logoColor=white" alt="Cursor" />
   <img src="https://img.shields.io/static/v1?label=&message=VSCode&logo=visualstudiocode&logoColor=ffffff&color=007ACC&style=flat-square" alt="VSCode" />
+  <img src="https://img.shields.io/badge/RTOS-FreeRTOS%20%7C%20Zephyr%20%7C%20RT--Thread-orange?style=flat-square" alt="RTOS" />
 </p>
 
-> ドライバ骨格の作成、既存コードの整理、低レベルファームウェアのレビュー、IDE / agent 向けルール調整に使う Embedded C コード助手。
+> ドライバ骨格の作成、既存コードの整理、低レベルファームウェアのレビュー、RTOS ガイダンス、ビルドシステム設定、IDE / agent 向けルール調整に使う Embedded C コード助手。
 
 [简体中文](README.md) · [English](README_EN.md) · [日本語](README_JP.md)
 
@@ -18,12 +19,15 @@
 
 このリポジトリのルール入口は `SKILL.md` だけです。
 
-`SKILL.md` には、以前分かれていた core skill、子領域ルール、IDE 向け調整ルール、参考情報を統合しています。主に次の作業で、モデルの出力を安定させ、保守的でレビューしやすくします。
+`SKILL.md` は、次の作業でモデルの出力を安定させ、保守的でレビューしやすくします：
 
-- 新しい Embedded C ドライバ骨格を書く
+- 新しい Embedded C ドライバ骨格を書く（関数レベルテンプレート付き）
 - 既存の driver、HAL/BSP、register-access code を整理する
 - ISR、DMA、cache、volatile、race、timeout、overflow のリスクをレビューする
-- リポジトリ既存の status type、命名、vendor SDK、build macros に合わせる
+- RTOS タスク設計、スレッドセーフ、優先度逆転防止をガイドする
+- ビルドシステム設定（CMake クロスコンパイル、リンカスクリプト、スタートアップコード）をガイドする
+- HAL 層テストとオンターゲットデバッグ戦略をガイドする
+- リポジトリコードが本スキル規則に合致すればそのまま使用し、合致しなければ論理を変えずに規則に統一
 - 同じルールを Cursor、VS Code、Claude 互換 agent、または `AGENTS.md` 向けに取り出す
 
 これはベンダーのリファレンスマニュアル、実際のレジスタマップ、IRQ、barrier、cache/DMA ルール、タイミング要件、認証資料の代替ではありません。
@@ -37,6 +41,8 @@
 /ecs この SPI 初期化コードを整理し、レジスタ書き込み順序を保つ
 /ecs この DMA ISR の race、volatile、cache 問題をレビューする
 /ecs Cursor .cursor/rules/*.mdc 向けのルール内容を生成する
+/ecs FreeRTOS タスク優先度とスタックサイズを設計する
+/ecs CMake クロスコンパイル設定とリンカスクリプトを作成する
 ```
 
 ---
@@ -59,8 +65,8 @@
 ```mermaid
 %%{init: {"flowchart": {"curve": "step"}} }%%
 flowchart TB
-    A([User request])
-    B[SKILL.md single entrypoint]
+    A([ユーザーリクエスト])
+    B[SKILL.md 単一入口]
     C[Repository context を読む]
     D[Hardware fact boundary を確認]
     E{Select work mode}
@@ -69,11 +75,14 @@ flowchart TB
     H[REVIEW: findings first / risk ordered]
     I[INSTALL / ADAPT: target-repo instructions を生成]
     J[Subdomain rules を適用]
-    K[Standards]
-    L[Drivers]
-    M[Architecture]
-    N[Domains]
-    O[Final output contract]
+    K[Coding Standards]
+    L[Driver Templates]
+    M[Architecture Rules]
+    N[RTOS Guidance]
+    O[Build System]
+    P[Test & Debug]
+    Q[Industry Domains]
+    R[Final output contract]
 
     A --> B
     B --> C
@@ -86,15 +95,21 @@ flowchart TB
     F --> J
     G --> J
     H --> J
-    I --> O
+    I --> R
     J --> K
     J --> L
     J --> M
     J --> N
-    K --> O
-    L --> O
-    M --> O
-    N --> O
+    J --> O
+    J --> P
+    J --> Q
+    K --> R
+    L --> R
+    M --> R
+    N --> R
+    O --> R
+    P --> R
+    Q --> R
 ```
 
 ---
@@ -103,17 +118,21 @@ flowchart TB
 
 | レイヤー | カバー範囲 |
 |----------|------------|
-| Entry | frontmatter、scope、trigger intent、operating principles を含む単一 `SKILL.md` |
+| Entry | frontmatter（triggers、command name）を含む単一 `SKILL.md` |
 | Context | local headers、macros、status types、naming、SDKs、build flags、existing drivers |
-| Fact boundary | `USER_PROVIDED`、`REPO_DERIVED`、`PLACEHOLDER` を明示し、hardware details を推測しない |
+| Fact boundary | `USER_PROVIDED`、`REPO_DERIVED`、`PLACEHOLDER` を明示し、hardware details を推を推測しない |
 | Work modes | `GENERATE`、`REWRITE`、`REVIEW`、`INSTALL`、`ADAPT` |
 | Output contracts | generated code、rewrite、review findings、IDE instructions の出力形 |
-| Coding standards | naming、types、error handling、struct patterns、comments、dynamic allocation limits |
-| Driver templates | UART、SPI、I2C、DMA、CAN、GPIO、Timer、Watchdog、MIL-STD-1553 |
-| Architecture rules | Cortex-M、Cortex-A、PowerPC、SPARC V8、RISC-V、unknown architecture handling |
+| Coding standards | naming、types、error handling、struct patterns、comments、dynamic allocation limits（重複除去済み） |
+| Driver templates | UART、SPI、I2C、DMA、CAN、GPIO、Timer、Watchdog、MIL-STD-1553（関数レベル骨格付き） |
+| Architecture rules | Cortex-M、Cortex-A、ESP32/Xtensa、RP2040、NRF52、RISC-V、PowerPC、SPARC V8 |
+| RTOS guidance | FreeRTOS、Zephyr、RT-Thread：タスク設計、スレッドセーフ、ISR 連携、優先度逆転、デッドロック防止 |
+| Build system | CMake クロスコンパイル、リンカスクリプト sections、スタートアップコード、コンパイラ属性 |
+| Test & debug | HAL mock パターン、アサーションレベル、オンターゲットデバッグ規約 |
 | Domains | Aerospace、military、industrial safety、automotive functional safety、general embedded |
-| Review checklist | hardware sources、register access、concurrency、behavior preservation、IDE-rule conflicts |
-| Maintenance check | skill 変更後に generate、rewrite、review、adapt、domain scenarios の smoke check を行う |
+| Anti-patterns | 5つの典型的アンチパターン（レジスタ散在、キャッシュコヒーレンシ、ISR ブロック、volatile 誤用、優先度逆転） |
+| Review checklist | hardware sources、register access、concurrency、RTOS safety、behavior preservation、IDE-rule conflicts |
+| Maintenance check | skill 変更後に generate、rewrite、review、RTOS、domain scenarios の smoke check を行う |
 
 ---
 
@@ -121,7 +140,7 @@ flowchart TB
 
 | 分類 | ルール |
 |------|--------|
-| リポジトリ優先 | 既存の status type、命名、SDK、include order、build macros を優先する |
+| 規則統一 | リポジトリコードが本スキルの規則に合致すればそのまま使用し、合致しなければ論理を変えずに規則に合わせて修正 |
 | ハードウェア事実 | register offset、bit field、reset value、IRQ、barrier、timing を捏造しない |
 | 出力形式 | generate、rewrite、review それぞれに IDE で扱いやすい形を使う |
 | 型 | public interface では固定幅整数と `bool` を優先する |
@@ -129,47 +148,63 @@ flowchart TB
 | レジスタアクセス | 専用定義または既存の vendor/CMSIS 構造体を使う |
 | メモリ | 低レベルドライバでは動的確保と VLA をデフォルトで避ける |
 | 並行性 | ISR、DMA、cache、critical section、memory ordering は保守的に扱う |
+| RTOS 安全 | ISR 内でブロック禁止、FromISR API 使用、共有データは同期プリミティブで保護 |
 
 ---
 
 ## 子領域のカバー範囲
 
-`SKILL.md` には、次の 4 つの子領域ルールを直接組み込んでいます。現在は別ディレクトリには分けていません。
+`SKILL.md` には、次の子領域ルールを直接組み込んでいます。別ディレクトリには分けていません。
 
-### Standards
+### Coding Standards
 
 - 命名、pointer naming、固定幅型、`bool`
-- fallback status type: `embedded_code_status_t`
+- fallback status type: `embedded_code_status_t`（`VALIDATE_NOT_NULL` と `VALIDATE_INIT` 付き）
 - config struct、runtime handle、state enum の構成
 - magic number、buffer size、timeout、retry count、コメント、review checklist
 
-### Drivers
+### Driver Templates
 
 - 共通構成: `*_reg.h`、`*_reg_t`、`*_REG`、`MASK/SHIFT`
+- **関数レベル骨格**: UART/SPI/GPIO/DMA の初期化、転送、ISR handler の完全パターン
 - UART、SPI、I2C、DMA、CAN、GPIO、Timer、Watchdog、MIL-STD-1553 をカバー
-- 最小 register field、bit naming 例、GPIO mode、MIL-STD-1553 mode/message type を含む
 - template は構成例であり、実際の offset、reserved bit、reset value、errata は対象資料に従う
 
-### Architecture
+### Architecture Rules
 
 - ISR、barrier、DMA、cache、interrupt controller、SMP、memory ordering、CSR/SPR をカバー
-- Cortex-M、Cortex-A、PowerPC、SPARC V8、RISC-V の quick ref を含む
-- PowerPC / SPARC / RISC-V wrapper 例を含む
+- Cortex-M、Cortex-A、**ESP32/Xtensa**、**RP2040 デュアルコア**、**NRF52**、RISC-V、PowerPC、SPARC V8 の quick ref を含む
+- ESP32 固有パターン: `IRAM_ATTR`、`FromISR` API、デュアルコア負荷分散、高レベル SPI API
+- RP2040 固有パターン: Pico SDK、デュアルコア FIFO、DMA チャネル割り当て
+- NRF52 固有パターン: nrfx ドライバ層、GPIOTE コールバック、SoftDevice 優先度
 - 未知アーキテクチャでは資料を要求し、確認できない場合は architecture-neutral skeleton と placeholder に留める
 
-| Architecture | Interrupts | Barrier / Sync | Special Registers |
-|--------------|------------|----------------|-------------------|
-| Cortex-M | NVIC | `__DMB()`, `__DSB()`, `__ISB()` | N/A |
-| Cortex-A | GIC | `dmb ish` | system registers |
-| PowerPC | PIC | `msync` | `mfspr` |
-| SPARC V8 | INTC | `stbar` | `rd psr` |
-| RISC-V | PLIC/CLINT | `fence` | `csrr` |
+### RTOS Guidance
 
-### Domains
+- FreeRTOS、Zephyr、RT-Thread API 比較表
+- タスク設計: スタックサイズ、優先度、作成順序、ウォッチドッグ
+- スレッドセーフデータ共有: ミューテックス、キュー、アトミック操作
+- ISR と RTOS の連携: ブロック禁止、FromISR API 使用、短く高速に
+- 優先度逆転防止: 優先度継承ミューテックス
+- デッドロック防止: 固定ロック順序、タイムアウト付き待機
 
-- Aerospace / DO-178C、Military / MIL-STD、Industrial / IEC 61508、Automotive / ISO 26262 をカバー
-- keyword detection、focus areas、default expectations、safety-review priorities を含む
-- DAL、ASIL、SIL、MC/DC、SPFM、LFM、BIT coverage を汎用デフォルトとして扱わない
+### Build System
+
+- リンカスクリプト: `.text`、`.rodata`、`.data` 再配置、`.bss` ゼロクリア
+- スタートアップコード: データコピー、bss クリア、SystemInit、main 呼び出し順序
+- コンパイラ属性: `interrupt`、`section`、`aligned`、`weak`、`always_inline`
+- CMake クロスコンパイルテンプレート
+
+### Test & Debug
+
+- HAL mock パターン: 関数ポインタテーブルによる交換可能な HAL
+- アサーションレベル: `STATIC_ASSERT`、`ASSERT`、`SOFT_ASSERT`
+- オンターゲットデバッグ: デバッグピン、エラーコード追跡、スタックオーバーフロー検出、ウォッチドッグ、ログレベル
+
+### Industry Domains
+
+- Aerospace / DO-178C、Military / MIL-STD、Industrial / IEC 61508、Automotive / ISO 26262、General Embedded をカバー
+- 各ドメインにデフォルト要件（動的割り当て禁止、safe state、インタフェース分離など）があるが、DAL/ASIL/SIL レーティングは汎用デフォルトとして扱わない
 
 ---
 
@@ -193,10 +228,11 @@ flowchart TB
 
 ```text
 embedded-code-skill/
-├── SKILL.md
-├── README.md
-├── README_EN.md
-└── README_JP.md
+├── SKILL.md       # 唯一のルール入口
+├── install.sh     # インストールスクリプト
+├── README.md      # 中国語 readme
+├── README_EN.md   # 英語 readme
+└── README_JP.md   # 日本語 readme
 ```
 
 ---
